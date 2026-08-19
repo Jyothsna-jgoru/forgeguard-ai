@@ -1,0 +1,63 @@
+diff --git a/src/main/java/dev/forgeguard/payments/api/PaymentController.java b/src/main/java/dev/forgeguard/payments/api/PaymentController.java
+index 99cfad1..2f463f8 100644
+--- a/src/main/java/dev/forgeguard/payments/api/PaymentController.java
++++ b/src/main/java/dev/forgeguard/payments/api/PaymentController.java
+@@ -21,8 +21,15 @@ public class PaymentController {
+     @PostMapping
+     public ResponseEntity<PaymentResult> create(
++            @RequestHeader("Idempotency-Key") String idempotencyKey,
+             @Valid @RequestBody PaymentRequest request) {
+         return ResponseEntity.status(HttpStatus.CREATED)
+-                .body(paymentService.create(request));
++                .body(paymentService.create(idempotencyKey, request));
++    }
++
++    @ExceptionHandler(IdempotencyConflictException.class)
++    public ResponseEntity<ErrorResponse> conflict() {
++        return ResponseEntity.status(HttpStatus.CONFLICT)
++                .body(new ErrorResponse("IDEMPOTENCY_CONFLICT", "The retry key cannot be reused for this request."));
+     }
+ }
+diff --git a/src/main/java/dev/forgeguard/payments/service/PaymentService.java b/src/main/java/dev/forgeguard/payments/service/PaymentService.java
+index 7a32b54..9b832c7 100644
+--- a/src/main/java/dev/forgeguard/payments/service/PaymentService.java
++++ b/src/main/java/dev/forgeguard/payments/service/PaymentService.java
+@@ -8,10 +8,23 @@ public class PaymentService {
+     private final PaymentProcessor processor;
++    private final IdempotencyStore idempotencyStore;
+ 
+-    public PaymentResult create(PaymentRequest request) {
+-        return processor.charge(request);
++    public PaymentResult create(String key, PaymentRequest request) {
++        String fingerprint = RequestFingerprint.of(request);
++        return idempotencyStore.find(key)
++                .map(entry -> entry.replayFor(fingerprint))
++                .orElseGet(() -> processOnce(key, fingerprint, request));
++    }
++
++    private PaymentResult processOnce(String key, String fingerprint, PaymentRequest request) {
++        PaymentResult result = processor.charge(request);
++        idempotencyStore.save(key, fingerprint, result);
++        return result;
+     }
+ }
+diff --git a/src/test/java/dev/forgeguard/payments/service/PaymentServiceTest.java b/src/test/java/dev/forgeguard/payments/service/PaymentServiceTest.java
+index f6ab231..337118d 100644
+--- a/src/test/java/dev/forgeguard/payments/service/PaymentServiceTest.java
++++ b/src/test/java/dev/forgeguard/payments/service/PaymentServiceTest.java
+@@ -31,3 +31,22 @@ class PaymentServiceTest {
++    @Test
++    void replaysOriginalResultForEquivalentRetry() {
++        PaymentResult first = service.create("retry-key", request);
++        PaymentResult retry = service.create("retry-key", request);
++        assertThat(retry).isEqualTo(first);
++        verify(processor, times(1)).charge(request);
++    }
++
++    @Test
++    void rejectsKeyReuseForDifferentPayload() {
++        service.create("retry-key", request);
++        assertThatThrownBy(() -> service.create("retry-key", changedRequest))
++                .isInstanceOf(IdempotencyConflictException.class);
++    }
+ }
