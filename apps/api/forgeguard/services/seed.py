@@ -8,10 +8,41 @@ from forgeguard.models import AgentExecution, ApprovalRequest, PolicyDecision, T
 def seed_demo(session: Session) -> None:
     if session.get(Ticket, TICKET["id"]):
         return
-    session.add(Ticket(id=TICKET["id"], title=TICKET["title"], description=TICKET["description"], risk_level=TICKET["risk_level"], service=TICKET["service"], payload=TICKET))
-    session.add(WorkflowRun(id="RUN-2026-0818-0042", ticket_id=TICKET["id"], status="awaiting_approval", current_stage="approval_gate", payload={"demo": True}))
+    session.add(
+        Ticket(
+            id=TICKET["id"],
+            title=TICKET["title"],
+            description=TICKET["description"],
+            risk_level=TICKET["risk_level"],
+            service=TICKET["service"],
+            payload=TICKET,
+        )
+    )
+    session.flush()
+
+    session.add(
+        WorkflowRun(
+            id="RUN-2026-0818-0042",
+            ticket_id=TICKET["id"],
+            status="awaiting_approval",
+            current_stage="approval_gate",
+            payload={"demo": True},
+        )
+    )
+    session.flush()
+
     for execution in AGENT_EXECUTIONS:
-        session.add(AgentExecution(run_id="RUN-2026-0818-0042", agent_name=execution["name"], agent_role=execution["role"], status="completed", elapsed_ms=execution["elapsed_ms"], input_data={"ticket_id": TICKET["id"]}, output_data={"items": execution["output"], "tool": execution["tool"]}))
+        session.add(
+            AgentExecution(
+                run_id="RUN-2026-0818-0042",
+                agent_name=execution["name"],
+                agent_role=execution["role"],
+                status="completed",
+                elapsed_ms=execution["elapsed_ms"],
+                input_data={"ticket_id": TICKET["id"]},
+                output_data={"items": execution["output"], "tool": execution["tool"]},
+            )
+        )
     seeded_decisions = [
         ("evt_01J8Y10K", "repository.analyst", "repository.read", "allowed", False),
         ("evt_01J8Y13M", "quality.validator", "test.run", "allowed", False),
