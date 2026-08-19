@@ -1,15 +1,15 @@
 import { AlertTriangle, Check, CheckCircle2, ClipboardCheck, FileCode2, GitBranch, GitPullRequestDraft, RotateCcw, ShieldCheck, TestTube2 } from 'lucide-react'
-import { useState } from 'react'
 import { PageHeader, RiskBanner, SectionTitle } from '../components/UI'
 import { implementationPlan, prPackage, proposedFiles } from '../data/demo'
+import { useDemoState } from '../state/useDemoState'
 
 export function ApprovalPage() {
-  const [approved, setApproved] = useState(false)
+  const { approved, approve, resetApproval } = useDemoState()
   return (
     <div className="page-container">
       <PageHeader eyebrow="Human checkpoint · APV-0042" title={approved ? 'Simulated draft pull request created' : 'Review package ready for approval'} description={approved ? 'The demo recorded an explicit approval and generated a local draft PR artifact. No GitHub API call was made.' : 'Automated work stops here. Review the plan, files, validation evidence, risk notes, and generated summary before authorizing the simulated transition.'} action={approved ? <span className="decision-badge badge-allowed"><CheckCircle2 size={12} /> Approved</span> : <span className="decision-badge badge-approval"><AlertTriangle size={12} /> Human action required</span>} />
 
-      {approved ? <ApprovedPackage onReset={() => setApproved(false)} /> : <ReviewPackage onApprove={() => setApproved(true)} />}
+      {approved ? <ApprovedPackage onReset={resetApproval} /> : <ReviewPackage onApprove={approve} />}
     </div>
   )
 }
@@ -37,4 +37,3 @@ function ApprovedPackage({ onReset }: { onReset: () => void }) {
     <section className="surface mt-6 p-6"><div className="grid gap-5 sm:grid-cols-3"><div><div className="detail-label">Approval record</div><div className="mt-2 font-mono text-xs text-blue-200">APR-2026-0042</div></div><div><div className="detail-label">Actor</div><div className="mt-2 text-xs text-slate-300">Demo visitor · explicit action</div></div><div><div className="detail-label">Audit result</div><div className="mt-2 text-xs text-teal-300">Hash chain verified</div></div></div></section>
     <button type="button" onClick={onReset} className="button button-secondary mt-6"><RotateCcw size={14} /> Reset checkpoint</button></div>
 }
-

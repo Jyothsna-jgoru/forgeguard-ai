@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Activity, Blocks, BookOpen, Braces, CheckCircle2, Menu, Network, ShieldCheck, Ticket, X } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Brand } from './Brand'
+import { useDemoState } from '../state/useDemoState'
 
 const nav = [
   { to: '/workflow', label: 'Workflow', icon: Activity },
@@ -14,12 +15,13 @@ const nav = [
 ]
 
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
+  const { approved } = useDemoState()
   return (
     <nav className="mt-8 space-y-1" aria-label="Demo navigation">
       {nav.map(({ to, label, icon: Icon }) => (
         <NavLink key={to} to={to} onClick={onNavigate} className={({ isActive }) => `nav-link ${isActive ? 'nav-link-active' : ''}`}>
           <Icon size={17} aria-hidden="true" /><span>{label}</span>
-          {to === '/approval' && <span className="ml-auto h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,.7)]" aria-label="Approval ready" />}
+          {to === '/approval' && <span className={`ml-auto h-2 w-2 rounded-full ${approved ? 'bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,.7)]' : 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,.7)]'}`} aria-label={approved ? 'Approval completed' : 'Approval ready'} />}
         </NavLink>
       ))}
     </nav>
@@ -70,4 +72,3 @@ export function AppShell() {
     </div>
   )
 }
-
