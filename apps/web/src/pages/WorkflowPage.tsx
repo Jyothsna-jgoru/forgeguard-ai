@@ -46,7 +46,7 @@ export function WorkflowPage() {
 
   return (
     <div className="page-container">
-      <PageHeader eyebrow="Demo Scenario � Completed run" title="Multi-agent workflow explorer" description="Replay how PAY-1842 moved through planning, repository analysis, change generation, validation, policy review, documentation, and a human checkpoint." action={<div className="flex gap-2"><button type="button" onClick={replay} className="button button-secondary"><RotateCcw size={14} /> Replay</button><button type="button" onClick={togglePlayback} className="button button-primary">{playing ? <Pause size={14} /> : <Play size={14} />}{playing ? 'Pause' : visibleCount >= agentSteps.length ? 'Play again' : visibleCount === 1 ? 'Start replay' : 'Continue'}</button></div>} />
+      <PageHeader eyebrow="Demo Scenario · Completed run" title="Multi-agent workflow explorer" description="Replay how PAY-1842 moved through planning, repository analysis, change generation, validation, policy review, documentation, and a human checkpoint." action={<div className="flex gap-2"><button type="button" onClick={replay} className="button button-secondary"><RotateCcw size={14} /> Replay</button><button type="button" onClick={togglePlayback} className="button button-primary">{playing ? <Pause size={14} /> : <Play size={14} />}{playing ? 'Pause' : visibleCount >= agentSteps.length ? 'Play again' : visibleCount === 1 ? 'Start replay' : 'Continue'}</button></div>} />
 
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4"><Metric label="Ticket" value={demoTicket.key} /><Metric label="Agent stages" value="6 + gate" /><Metric label="Validation" value="12 passed" tone="teal" /><Metric label="External action" value={approved ? 'Draft PR approved' : 'Awaiting approval'} tone={approved ? 'teal' : 'amber'} /></div>
 
@@ -81,4 +81,3 @@ export function WorkflowPage() {
 }
 
 function Detail({ label, text, extraClass = '' }: { label: string; text: string; extraClass?: string }) { return <div className={extraClass}><div className="detail-label">{label}</div><p className="mt-3 text-sm leading-6 text-slate-300">{text}</p></div> }
-
