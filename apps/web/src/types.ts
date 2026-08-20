@@ -2,6 +2,17 @@ import type { LucideIcon } from 'lucide-react'
 
 export type Decision = 'allowed' | 'approval_required' | 'blocked'
 export type StepStatus = 'completed' | 'approval' | 'pending'
+export type RiskLevel = 'Low' | 'Medium' | 'High'
+
+export interface EngineeringTicket {
+  key: string
+  title: string
+  description: string
+  risk: RiskLevel
+  service: string
+  owner: string
+  acceptance: string[]
+}
 
 export interface AgentStep {
   id: string
@@ -30,4 +41,3 @@ export interface PolicyEvent {
   reason: string
   approval: string
 }
-

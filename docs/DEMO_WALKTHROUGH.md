@@ -6,9 +6,18 @@ This path is designed for a 6–10 minute engineering or recruiting review. It s
 
 ## 1. Establish the product boundary
 
-Open `/`. Point out the headline, the six specialized agents, and the gateway preview. The three hero notes make the public posture explicit: no sign-in, seeded local data, and no repository access.
+Open `/`. Point out the headline, the six specialized agents, and the gateway preview. The hero notes make the public posture explicit: no sign-in, local-only ticket input, and no repository access.
 
-## 2. Replay the workflow
+## 2. Try a custom ticket
+
+Open `/intake` and enter a non-confidential engineering scenario with measurable acceptance criteria. Select **Run secure workflow**.
+
+- Confirm that the generated `DEMO-####` ticket appears throughout the workflow.
+- Note that planning, validation, policy, and approval outputs adapt deterministically.
+- Open **Changes** and confirm that ForgeGuard proposes implementation areas rather than fabricating repository-specific code.
+- Use **Open PAY-1842 reference demo** at any time to restore the complete Java sample.
+
+## 3. Replay the workflow
 
 Open `/workflow` and select **Replay**.
 
@@ -18,7 +27,7 @@ Open `/workflow` and select **Replay**.
 - At Security Review, note the residual concurrency limitation and approval requirement.
 - Finish at the gate where `github.create_draft_pr` remains pending.
 
-## 3. Inspect source context
+## 4. Inspect source context
 
 Open `/ticket`.
 
@@ -26,7 +35,7 @@ Open `/ticket`.
 - Explain why risk is medium: payment execution is sensitive, while the proposal remains isolated and review-only.
 - Inspect the retrieved engineering context and its transparent local match scores.
 
-## 4. Review the change
+## 5. Review the change
 
 Open `/changes`.
 
@@ -35,7 +44,7 @@ Open `/changes`.
 - Use **Copy diff** to verify that the visible control works.
 - Discuss the documented limitation: production storage would require atomic durable semantics.
 
-## 5. Inspect governance
+## 6. Inspect governance
 
 Open `/governance` and expand representative decisions:
 
@@ -47,13 +56,13 @@ Open `/governance` and expand representative decisions:
 
 Connect these outcomes to deny-by-default policy, identity, schemas, least privilege, approval gates, and audit evidence.
 
-## 6. Exercise human approval
+## 7. Exercise human approval
 
 Open `/approval`, review the plan, files, checks, and risks, then select **Approve Draft PR**.
 
 The resulting artifact shows title, branch, base, changed files, checks, reviewer focus, and approval ID. Confirm the page explicitly states that no GitHub mutation occurred. Use **Reset checkpoint** to restore the scenario.
 
-## 7. Close with architecture
+## 8. Close with architecture
 
 Open `/architecture` and trace:
 
@@ -64,4 +73,3 @@ Open `/architecture` and trace:
 5. Control plane to PostgreSQL and hash-linked audit records.
 
 Emphasize the trust boundaries and safety invariants rather than claims about production adoption.
-

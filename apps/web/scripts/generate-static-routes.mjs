@@ -6,6 +6,7 @@ const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const distDirectory = path.join(webRoot, 'dist')
 const entryPoint = path.join(distDirectory, 'index.html')
 const routes = [
+  'intake',
   'workflow',
   'ticket',
   'changes',

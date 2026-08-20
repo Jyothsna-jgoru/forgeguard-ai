@@ -21,7 +21,7 @@ export function LandingPage() {
         <nav className="hidden items-center gap-7 text-sm text-slate-400 md:flex" aria-label="Primary navigation">
           <a href="#platform" className="hover:text-white">Platform</a><a href="#security" className="hover:text-white">Security</a><Link to="/architecture" className="hover:text-white">Architecture</Link><Link to="/docs" className="hover:text-white">Docs</Link>
         </nav>
-        <Link to="/workflow" className="button button-secondary">Open demo <ArrowRight size={15} /></Link>
+        <Link to="/intake" className="button button-secondary">Try a ticket <ArrowRight size={15} /></Link>
       </header>
 
       <main>
@@ -31,11 +31,11 @@ export function LandingPage() {
             <h1 className="max-w-4xl text-5xl font-semibold leading-[1.03] tracking-[-0.055em] text-white sm:text-6xl lg:text-[68px]">Secure AI orchestration for <span className="gradient-text">software delivery</span></h1>
             <p className="mt-7 max-w-xl text-base leading-7 text-slate-400 sm:text-lg sm:leading-8">ForgeGuard coordinates specialized agents through a governed delivery workflow—turning an engineering ticket into tested, policy-reviewed, human-approved change evidence.</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link to="/workflow" className="button button-primary">Explore Live Workflow <ArrowRight size={16} /></Link>
-              <Link to="/architecture" className="button button-secondary">View system design</Link>
+              <Link to="/intake" className="button button-primary">Submit Your Own Ticket <ArrowRight size={16} /></Link>
+              <Link to="/workflow" className="button button-secondary">Explore completed workflow</Link>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs text-slate-500">
-              <span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> No sign-in</span><span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Seeded local data</span><span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> No repository access</span>
+              <span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> No sign-in</span><span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Local-only ticket input</span><span className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> No repository access</span>
             </div>
           </div>
 
@@ -70,10 +70,9 @@ export function LandingPage() {
           <div><div className="eyebrow mb-3">Control before capability</div><h2 className="text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl">Every tool call is a policy decision.</h2><p className="mt-5 leading-7 text-slate-400">Agents never receive direct tool access. The gateway authenticates agent identity, validates structured arguments, enforces least privilege, and records an audit event before a simulated adapter can run.</p><div className="mt-7 grid gap-4 sm:grid-cols-2">{['Deny by default','Role-scoped access','Schema validation','Human approval gates'].map((item) => <div key={item} className="flex items-center gap-3 text-sm text-slate-300"><span className="flex h-6 w-6 items-center justify-center rounded-md bg-teal-400/10 text-teal-300"><Check size={13} /></span>{item}</div>)}</div><Link to="/governance" className="button button-secondary mt-8">Explore gateway decisions <ArrowRight size={15} /></Link></div>
         </section>
 
-        <section className="border-t border-line/60 bg-gradient-to-b from-[#091321] to-ink py-20 text-center"><div className="mx-auto max-w-3xl px-5"><div className="eyebrow mb-4">See the evidence chain</div><h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">From ticket to review-ready change.</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-slate-400">Replay the completed scenario, inspect every decision, and approve a simulated draft pull request.</p><Link to="/workflow" className="button button-primary mt-8">Explore Live Workflow <ArrowRight size={16} /></Link></div></section>
+        <section className="border-t border-line/60 bg-gradient-to-b from-[#091321] to-ink py-20 text-center"><div className="mx-auto max-w-3xl px-5"><div className="eyebrow mb-4">See the evidence chain</div><h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Bring a ticket. Explore the governed path.</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-slate-400">Use your own engineering scenario or replay PAY-1842, inspect every decision, and approve a simulated draft pull request.</p><Link to="/intake" className="button button-primary mt-8">Try Your Own Ticket <ArrowRight size={16} /></Link></div></section>
       </main>
       <footer className="border-t border-line/60 bg-[#060d18] py-8"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 text-xs text-slate-600 sm:flex-row lg:px-8"><Brand /><span>Public demonstration · Simulated integrations · No external actions</span></div></footer>
     </div>
   )
 }
-

@@ -11,7 +11,7 @@ describe('ForgeGuard application routes', () => {
   it('renders the portfolio landing page', () => {
     renderRoute('/')
     expect(screen.getByRole('heading', { name: /Secure AI orchestration for software delivery/i })).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: /Explore Live Workflow/i })[0]).toHaveAttribute('href', '/workflow')
+    expect(screen.getByRole('link', { name: /Submit Your Own Ticket/i })).toHaveAttribute('href', '/intake')
   })
 
   it('renders the seeded ticket independently of an API', () => {
@@ -19,6 +19,12 @@ describe('ForgeGuard application routes', () => {
     expect(screen.getByText('PAY-1842')).toBeInTheDocument()
     expect(screen.getByText(/Prevent duplicate payment processing/i)).toBeInTheDocument()
     expect(screen.getByText('RAG-retrieved engineering context')).toBeInTheDocument()
+  })
+
+  it('renders the local ticket intake route', () => {
+    renderRoute('/intake')
+    expect(screen.getByRole('heading', { name: 'Bring your own engineering ticket' })).toBeInTheDocument()
+    expect(screen.getByText(/ticket content stays in this browser/i)).toBeInTheDocument()
   })
 
   it('redirects unknown routes to the landing page', () => {

@@ -6,7 +6,7 @@
 html { scroll-behavior: smooth; background: #07101f; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: #07101f; }
 button, a { -webkit-tap-highlight-color: transparent; }
-button:focus-visible, a:focus-visible { outline: 2px solid #5b8cff; outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #5b8cff; outline-offset: 3px; }
 ::selection { background: rgba(91, 140, 255, .3); color: white; }
 * { scrollbar-width: thin; scrollbar-color: #253751 #0a1422; }
 
@@ -27,6 +27,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid #5b8cff; outline-offs
   .badge-blocked { @apply border-red-400/20 bg-red-400/[0.08] text-red-300; }
   .metric-card { @apply rounded-xl border border-line/75 bg-panel/60 p-4; }
   .tag { @apply inline-flex items-center gap-1.5 rounded-md border border-line/80 bg-white/[0.025] px-2.5 py-1.5 text-[10px] text-slate-400; }
+  .form-control { @apply w-full rounded-lg border border-line bg-ink/60 px-3.5 py-3 text-sm text-slate-200 placeholder:text-slate-700 transition-colors hover:border-slate-600 focus:border-electric focus:outline-none; }
   .agent-card { @apply rounded-xl border border-line/70 bg-panel/50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-600 hover:bg-panel; }
   .workflow-step-button { @apply relative z-10 flex w-full items-center gap-3 rounded-lg border border-transparent px-2 py-2.5 transition-colors enabled:hover:bg-white/[0.025] disabled:cursor-not-allowed; }
   .workflow-step-selected { @apply border-electric/20 bg-electric/[0.065]; }

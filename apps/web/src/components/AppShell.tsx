@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Activity, Blocks, BookOpen, Braces, CheckCircle2, Menu, Network, ShieldCheck, Ticket, X } from 'lucide-react'
+import { Activity, Blocks, BookOpen, Braces, CheckCircle2, FileInput, Menu, Network, ShieldCheck, Ticket, X } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Brand } from './Brand'
 import { useDemoState } from '../state/useDemoState'
 
 const nav = [
+  { to: '/intake', label: 'New ticket', icon: FileInput },
   { to: '/workflow', label: 'Workflow', icon: Activity },
   { to: '/ticket', label: 'Ticket', icon: Ticket },
   { to: '/changes', label: 'Changes', icon: Braces },
@@ -31,6 +32,7 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
 export function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const { ticket, isCustomTicket } = useDemoState()
 
   return (
     <div className="min-h-screen bg-ink text-slate-200">
@@ -40,7 +42,7 @@ export function AppShell() {
         <Navigation />
         <div className="absolute inset-x-5 bottom-5 rounded-xl border border-teal-400/15 bg-teal-400/[0.04] p-3">
           <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold text-teal-300"><span className="status-dot" /> DEMO MODE</div>
-          <p className="text-[11px] leading-relaxed text-slate-500">Seeded workflow · simulated tools · no external mutations</p>
+          <p className="text-[11px] leading-relaxed text-slate-500">{isCustomTicket ? 'Local ticket · deterministic outputs · no external mutations' : 'Seeded workflow · simulated tools · no external mutations'}</p>
         </div>
       </aside>
 
@@ -50,7 +52,7 @@ export function AppShell() {
           <Blocks size={14} /> <span>ForgeGuard</span><span>/</span><span className="capitalize text-slate-300">{location.pathname.slice(1) || 'overview'}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden rounded-md border border-line bg-white/[0.025] px-2.5 py-1.5 font-mono text-[10px] text-slate-400 sm:inline">RUN-2026-0818-0042</span>
+          <span className="hidden rounded-md border border-line bg-white/[0.025] px-2.5 py-1.5 font-mono text-[10px] text-slate-400 sm:inline">{isCustomTicket ? `RUN-${ticket.key}` : 'RUN-2026-0818-0042'}</span>
           <span className="flex items-center gap-2 text-[11px] font-medium text-teal-300"><span className="status-dot" /> Completed</span>
           <button type="button" onClick={() => setMenuOpen(true)} className="icon-button lg:hidden" aria-label="Open navigation"><Menu size={19} /></button>
         </div>

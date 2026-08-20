@@ -4,7 +4,7 @@
 
 ForgeGuard AI is a portfolio demonstration of a secure agentic harness that moves a realistic engineering ticket through planning, repository analysis, proposed code changes, validation, security review, human approval, and simulated draft pull-request generation.
 
-The public experience is intentionally recruiter-friendly: open the site, replay the completed workflow, inspect every tool decision, review a Java diff, and approve a local draft PR artifact—without signing in, entering a key, or connecting a repository.
+The public experience is intentionally recruiter-friendly: submit a local-only engineering ticket or open the completed reference scenario, replay the workflow, inspect every tool decision, and approve a simulated draft PR artifact—without signing in, entering a key, or connecting a repository.
 
 ![ForgeGuard AI landing page](docs/assets/landing.png)
 
@@ -18,7 +18,8 @@ Agentic development systems need more than capable agents. They need explicit id
 
 ### Key features
 
-- Eight-route React and TypeScript experience with a complete static demo data layer.
+- Nine-route React and TypeScript experience with a complete static demo data layer.
+- Local-only custom ticket intake with deterministic planning, validation, policy, and approval outputs.
 - Step-by-step replay of six agent stages and a human approval checkpoint.
 - Deterministic LangGraph workflow that requires no model provider.
 - FastAPI resources for tickets, workflow runs, policy decisions, approvals, and audit evidence.
@@ -36,6 +37,8 @@ Agentic development systems need more than capable agents. They need explicit id
 The proposed change requires an `Idempotency-Key`, binds it to a canonical request fingerprint, returns the original result for an equivalent retry, rejects conflicting reuse with HTTP 409, and proves that the payment processor is invoked once per logical request.
 
 The sample repository is under [`samples/payment-service`](samples/payment-service). Its checked-in source represents the reviewable proposed end state; [`proposed-change.diff`](samples/payment-service/proposed-change.diff) preserves the unified diff shown in the application.
+
+Visitors can also open **New ticket** and supply their own summary, context, service, risk, and acceptance criteria. Custom ticket text remains in browser storage and produces a deterministic structured proposal. Because no repository is connected, ForgeGuard labels repository-specific assumptions instead of inventing a source-code diff.
 
 ## Architecture
 
@@ -207,13 +210,14 @@ Full request and response examples are in [`docs/API.md`](docs/API.md). Interact
 ## Demo walkthrough
 
 1. Start at the landing page to understand the product boundary and control-plane model.
-2. Open **Workflow** and replay the agent timeline one stage at a time.
-3. Inspect **Ticket** for normalized criteria and locally retrieved standards.
-4. Review **Changes** for the proposed Java diff and per-file rationale.
-5. Use **Governance** to expand allowed, approval-required, and blocked tool decisions.
-6. Open **Approval**, review the package, and select **Approve Draft PR**.
-7. Confirm that the resulting draft is explicitly simulated and includes a local audit record.
-8. Finish in **Architecture** to trace data flow and trust boundaries.
+2. Open **New ticket**, enter a safe engineering scenario, and run the deterministic workflow—or use PAY-1842 as the reference path.
+3. Replay the agent timeline one stage at a time.
+4. Inspect **Ticket** for normalized criteria and locally retrieved standards.
+5. Review **Changes** for an honest structured proposal or the reference Java diff.
+6. Use **Governance** to expand allowed, approval-required, and blocked tool decisions.
+7. Open **Approval**, review the package, and select **Approve Draft PR**.
+8. Confirm that the resulting draft is explicitly simulated and includes a local audit record.
+9. Finish in **Architecture** to trace data flow and trust boundaries.
 
 See [`docs/DEMO_WALKTHROUGH.md`](docs/DEMO_WALKTHROUGH.md) for a guided evaluation script.
 
@@ -225,7 +229,7 @@ The `pages.yml` workflow builds `apps/web` with the repository-specific base pat
 2. Set **Source** to **GitHub Actions**.
 3. Push the `main` branch or run **Deploy public demo to Pages** manually.
 
-The static bundle contains the complete scenario and does not require the API, database, credentials, or browser storage. The included `404.html` restores client-side routes when a visitor opens a nested path directly.
+The static bundle contains the complete reference scenario and does not require the API, database, or credentials. Browser storage is used only to persist a visitor's local custom ticket and approval state; the reference demo still works when storage is unavailable. The included `404.html` restores client-side routes when a visitor opens a nested path directly.
 
 ## Scope and safety
 
@@ -235,6 +239,7 @@ ForgeGuard AI is a public portfolio demonstration, not a production service.
 - The site never asks for credentials, tokens, repository authorization, or account connection.
 - No adapter can mutate an external repository, trigger a deployment, or retrieve a secret.
 - The approval button changes local demo state and returns a simulated artifact only.
+- Custom ticket text stays in the visitor's browser and is never sent to the API, a model provider, or a repository.
 - The in-memory idempotency store in the sample is educational; it is not a production concurrency or durability design.
 - Security controls shown here demonstrate architecture and policy behavior, not certification or compliance status.
 

@@ -6,6 +6,7 @@ import { ChangesPage } from './pages/ChangesPage'
 import { DocsPage } from './pages/DocsPage'
 import { GovernancePage } from './pages/GovernancePage'
 import { LandingPage } from './pages/LandingPage'
+import { IntakePage } from './pages/IntakePage'
 import { TicketPage } from './pages/TicketPage'
 import { WorkflowPage } from './pages/WorkflowPage'
 import { DemoStateProvider } from './state/DemoState'
@@ -16,6 +17,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route element={<AppShell />}>
+          <Route path="/intake" element={<IntakePage />} />
           <Route path="/workflow" element={<WorkflowPage />} />
           <Route path="/ticket" element={<TicketPage />} />
           <Route path="/changes" element={<ChangesPage />} />

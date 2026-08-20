@@ -1,7 +1,7 @@
 import { BookOpenCheck, Bot, Braces, FileSearch, FlaskConical, Route, ShieldCheck } from 'lucide-react'
-import type { AgentStep, PolicyEvent } from '../types'
+import type { AgentStep, EngineeringTicket, PolicyEvent } from '../types'
 
-export const demoTicket = {
+export const demoTicket: EngineeringTicket = {
   key: 'PAY-1842',
   title: 'Add idempotency validation to the payment-processing API and cover retry behavior with unit tests.',
   description: 'Prevent duplicate payment processing when clients retry POST /api/payments. Accept a caller-supplied Idempotency-Key, replay the original response for matching retries, and reject conflicting payloads that reuse the same key.',
