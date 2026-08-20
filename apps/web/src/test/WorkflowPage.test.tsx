@@ -42,4 +42,3 @@ describe('Workflow explorer', () => {
     expect(screen.queryByText('Approval required')).not.toBeInTheDocument()
   })
 })
-
