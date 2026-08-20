@@ -4,7 +4,7 @@
 
 ForgeGuard AI is a portfolio demonstration of a secure agentic harness that moves a realistic engineering ticket through planning, repository analysis, proposed code changes, validation, security review, human approval, and simulated draft pull-request generation.
 
-The public experience is intentionally recruiter-friendly: submit a local-only engineering ticket or open the completed reference scenario, replay the workflow, inspect every tool decision, and approve a simulated draft PR artifact—without signing in, entering a key, or connecting a repository.
+The public experience is intentionally recruiter-friendly: choose from four ready-made demonstration tickets or optionally enter a sanitized local-only scenario, replay the workflow, inspect every tool decision, and approve a simulated draft PR artifact—without signing in, entering a key, or connecting a repository.
 
 ![ForgeGuard AI landing page](docs/assets/landing.png)
 
@@ -19,7 +19,7 @@ Agentic development systems need more than capable agents. They need explicit id
 ### Key features
 
 - Nine-route React and TypeScript experience with a complete static demo data layer.
-- Local-only custom ticket intake with deterministic planning, validation, policy, and approval outputs.
+- Four ready-made, non-confidential ticket scenarios plus optional local-only custom intake.
 - Step-by-step replay of six agent stages and a human approval checkpoint.
 - Deterministic LangGraph workflow that requires no model provider.
 - FastAPI resources for tickets, workflow runs, policy decisions, approvals, and audit evidence.
@@ -210,7 +210,7 @@ Full request and response examples are in [`docs/API.md`](docs/API.md). Interact
 ## Demo walkthrough
 
 1. Start at the landing page to understand the product boundary and control-plane model.
-2. Open **New ticket**, enter a safe engineering scenario, and run the deterministic workflow—or use PAY-1842 as the reference path.
+2. Open **New ticket** and choose a ready-made payment, identity, notification, or order scenario. Custom sanitized input remains available but is never required.
 3. Replay the agent timeline one stage at a time.
 4. Inspect **Ticket** for normalized criteria and locally retrieved standards.
 5. Review **Changes** for an honest structured proposal or the reference Java diff.
@@ -229,7 +229,7 @@ The `pages.yml` workflow builds `apps/web` with the repository-specific base pat
 2. Set **Source** to **GitHub Actions**.
 3. Push the `main` branch or run **Deploy public demo to Pages** manually.
 
-The static bundle contains the complete reference scenario and does not require the API, database, or credentials. Browser storage is used only to persist a visitor's local custom ticket and approval state; the reference demo still works when storage is unavailable. The included `404.html` restores client-side routes when a visitor opens a nested path directly.
+The static bundle contains all four ready-made scenarios and does not require the API, database, Docker, or credentials. Browser storage persists the selected scenario, optional custom ticket, and approval state; the default reference demo still works when storage is unavailable. The included `404.html` restores client-side routes when a visitor opens a nested path directly.
 
 ## Scope and safety
 
@@ -239,6 +239,7 @@ ForgeGuard AI is a public portfolio demonstration, not a production service.
 - The site never asks for credentials, tokens, repository authorization, or account connection.
 - No adapter can mutate an external repository, trigger a deployment, or retrieve a secret.
 - The approval button changes local demo state and returns a simulated artifact only.
+- Ready-made tickets contain only authored demonstration content and require no visitor input.
 - Custom ticket text stays in the visitor's browser and is never sent to the API, a model provider, or a repository.
 - The in-memory idempotency store in the sample is educational; it is not a production concurrency or durability design.
 - Security controls shown here demonstrate architecture and policy behavior, not certification or compliance status.

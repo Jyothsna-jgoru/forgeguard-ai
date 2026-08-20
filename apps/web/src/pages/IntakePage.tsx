@@ -1,7 +1,8 @@
-import { ArrowRight, FileInput, LockKeyhole, RotateCcw, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, CreditCard, FileInput, KeyRound, LockKeyhole, RotateCcw, Send, ShieldCheck, ShoppingBag, Sparkles } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageHeader, SecureNotice } from '../components/UI'
+import { demoTickets } from '../data/demo'
 import { createTicketKey } from '../data/scenario'
 import { useDemoState } from '../state/useDemoState'
 import type { RiskLevel } from '../types'
@@ -9,11 +10,13 @@ import type { RiskLevel } from '../types'
 type FormErrors = Partial<Record<'title' | 'description' | 'service' | 'acceptance', string>>
 
 const example = {
-  title: 'Add idempotency validation to the payment-processing API',
-  description: 'Prevent duplicate payment processing when clients retry payment creation requests. Equivalent retries should return the original result and conflicting payloads should fail safely.',
-  service: 'payment-service',
-  acceptance: 'Require an idempotency key for payment creation.\nReplay the original result for an equivalent retry.\nReject key reuse when the request payload changes.\nCover retry behavior with focused unit tests.',
+  title: 'Add rate limiting to the account-recovery endpoint',
+  description: 'Limit repeated recovery attempts and return a stable response after the threshold while keeping account existence private.',
+  service: 'identity-service',
+  acceptance: 'Return HTTP 429 after the configured threshold.\nInclude a Retry-After header.\nKeep responses identical for known and unknown accounts.\nCover the reset window with unit tests.',
 }
+
+const demoIcons = [CreditCard, KeyRound, Send, ShoppingBag]
 
 export function IntakePage() {
   const navigate = useNavigate()
@@ -44,6 +47,7 @@ export function IntakePage() {
       risk,
       owner: 'Demo visitor · local workspace',
       acceptance: criteria,
+      source: 'custom',
     })
     navigate('/workflow')
   }
@@ -52,7 +56,7 @@ export function IntakePage() {
     setTitle(example.title)
     setDescription(example.description)
     setService(example.service)
-    setRisk('Medium')
+    setRisk('High')
     setAcceptance(example.acceptance)
     setErrors({})
   }
@@ -62,21 +66,49 @@ export function IntakePage() {
     navigate('/workflow')
   }
 
+  const runDemo = (demo: (typeof demoTickets)[number]) => {
+    submitTicket(demo)
+    navigate('/workflow')
+  }
+
   return (
     <div className="page-container">
       <PageHeader
-        eyebrow="Ticket intake · Local deterministic mode"
-        title="Bring your own engineering ticket"
-        description="Describe a change and ForgeGuard will create a deterministic planning, validation, policy, and approval walkthrough entirely in your browser."
-        action={<span className="decision-badge badge-allowed"><LockKeyhole size={12} /> Local-only input</span>}
+        eyebrow="Ticket intake · Safe demonstration mode"
+        title="Choose a demo ticket—or create your own"
+        description="Start with a ready-made, non-confidential scenario or describe a change of your own. Both paths run the same deterministic planning, validation, policy, and approval walkthrough."
+        action={<span className="decision-badge badge-allowed"><ShieldCheck size={12} /> 4 safe scenarios</span>}
       />
 
-      <SecureNotice><span><strong className="font-semibold text-white">Safe public demonstration:</strong> ticket content stays in this browser and is never sent to an API, repository, or model provider. Do not enter credentials, customer data, or confidential source code.</span></SecureNotice>
+      <SecureNotice><span><strong className="font-semibold text-white">Prefer not to enter a ticket?</strong> Choose any ready-made scenario below. They contain no company or customer information and require no typing, sign-in, repository connection, or Docker service.</span></SecureNotice>
+
+      <section className="mt-6" aria-labelledby="demo-ticket-heading">
+        <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div><div className="eyebrow mb-2">Recommended starting point</div><h2 id="demo-ticket-heading" className="text-xl font-semibold text-white">Ready-made demo tickets</h2><p className="mt-2 text-sm text-slate-500">Explore realistic SDLC scenarios without supplying any information.</p></div>
+          <span className="tag"><LockKeyhole size={12} /> Safe sample data</span>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+          {demoTickets.map((demo, index) => {
+            const Icon = demoIcons[index]
+            const riskClass = demo.risk === 'Low' ? 'badge-allowed' : demo.risk === 'High' ? 'badge-blocked' : 'badge-approval'
+            return <article key={demo.key} className="group flex min-h-[290px] flex-col rounded-xl border border-line/80 bg-panel/70 p-5 transition hover:-translate-y-0.5 hover:border-electric/35 hover:bg-panel">
+              <div className="flex items-start justify-between gap-3"><span className="workflow-icon accent-blue"><Icon size={17} /></span><span className={`decision-badge ${riskClass}`}>{demo.risk} risk</span></div>
+              <div className="mt-5 flex items-center gap-2"><span className="font-mono text-[10px] font-semibold text-electric">{demo.key}</span>{index === 0 && <span className="rounded-full bg-teal-400/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider text-teal-300">Full code diff</span>}</div>
+              <h3 className="mt-3 text-sm font-semibold leading-6 text-white">{demo.title}</h3>
+              <div className="mt-auto pt-5"><div className="mb-4 flex items-center justify-between gap-3 text-[10px] text-slate-500"><span>{demo.service}</span><span className="text-right">{demo.acceptance.length} acceptance checks</span></div><button type="button" onClick={() => runDemo(demo)} className="button button-secondary w-full group-hover:border-electric/40 group-hover:text-white">Run {demo.key} demo <ArrowRight size={14} /></button></div>
+            </article>
+          })}
+        </div>
+      </section>
+
+      <div className="my-9 flex items-center gap-4" aria-hidden="true"><span className="h-px flex-1 bg-line/70" /><span className="text-center text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">or use a safe scenario of your own</span><span className="h-px flex-1 bg-line/70" /></div>
+
+      <SecureNotice><span><strong className="font-semibold text-white">Custom tickets are optional and browser-only:</strong> content is never sent to an API, repository, or model provider. Use a made-up or sanitized scenario—never enter credentials, customer data, internal ticket text, or confidential source code.</span></SecureNotice>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <form onSubmit={submit} className="surface overflow-hidden" noValidate>
           <div className="border-b border-line/70 p-6 md:p-7">
-            <div className="flex items-center gap-3"><span className="workflow-icon accent-blue"><FileInput size={17} /></span><div><h2 className="font-semibold text-white">Ticket details</h2><p className="mt-1 text-xs text-slate-500">Fields are normalized into a temporary demo scenario.</p></div></div>
+            <div className="flex items-center gap-3"><span className="workflow-icon accent-blue"><FileInput size={17} /></span><div><h2 className="font-semibold text-white">Optional custom ticket</h2><p className="mt-1 text-xs text-slate-500">Use only sanitized or made-up information. Fields stay in this browser.</p></div></div>
           </div>
           <div className="space-y-6 p-6 md:p-7">
             <Field label="Ticket summary" error={errors.title} hint={`${title.length}/140`}>
@@ -103,8 +135,8 @@ export function IntakePage() {
             </Field>
 
             <div className="flex flex-col-reverse justify-between gap-3 border-t border-line/70 pt-6 sm:flex-row sm:items-center">
-              <button type="button" onClick={loadExample} className="button button-secondary"><Sparkles size={14} /> Fill example</button>
-              <button type="submit" className="button button-primary px-5">Run secure workflow <ArrowRight size={15} /></button>
+              <button type="button" onClick={loadExample} className="button button-secondary"><Sparkles size={14} /> Fill safe example</button>
+              <button type="submit" className="button button-primary px-5">Run custom workflow <ArrowRight size={15} /></button>
             </div>
           </div>
         </form>
@@ -124,10 +156,11 @@ export function IntakePage() {
           </section>
 
           <section className="rounded-xl border border-violet-400/20 bg-violet-400/[0.045] p-5">
-            <div className="flex gap-3"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-violet-300" /><div><h2 className="text-sm font-semibold text-white">The safety boundary stays intact</h2><p className="mt-2 text-xs leading-5 text-slate-400">Custom input changes the displayed scenario only. Tool calls, tests, code changes, GitHub actions, and approvals remain simulated.</p></div></div>
+            <div className="flex gap-3"><ShieldCheck size={18} className="mt-0.5 shrink-0 text-violet-300" /><div><h2 className="text-sm font-semibold text-white">The safety boundary stays intact</h2><p className="mt-2 text-xs leading-5 text-slate-400">Whether you choose a demo or enter a custom scenario, tool calls, tests, code changes, GitHub actions, and approvals remain simulated.</p></div></div>
           </section>
 
-          <button type="button" onClick={openReference} className="button button-secondary w-full"><RotateCcw size={14} /> Open PAY-1842 reference demo</button>
+          <section className="surface p-5"><div className="flex gap-3"><Check size={17} className="mt-0.5 shrink-0 text-teal-300" /><div><h2 className="text-sm font-semibold text-white">Current scenario</h2><p className="mt-2 text-xs leading-5 text-slate-400"><span className="font-mono text-blue-200">{ticket.key}</span> · {ticket.title}</p></div></div></section>
+          <button type="button" onClick={openReference} className="button button-secondary w-full"><RotateCcw size={14} /> Restore PAY-1842 reference</button>
         </aside>
       </div>
     </div>

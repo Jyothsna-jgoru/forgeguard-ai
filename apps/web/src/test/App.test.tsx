@@ -11,7 +11,7 @@ describe('ForgeGuard application routes', () => {
   it('renders the portfolio landing page', () => {
     renderRoute('/')
     expect(screen.getByRole('heading', { name: /Secure AI orchestration for software delivery/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Submit Your Own Ticket/i })).toHaveAttribute('href', '/intake')
+    expect(screen.getByRole('link', { name: /Choose a Demo Ticket/i })).toHaveAttribute('href', '/intake')
   })
 
   it('renders the seeded ticket independently of an API', () => {
@@ -23,8 +23,9 @@ describe('ForgeGuard application routes', () => {
 
   it('renders the local ticket intake route', () => {
     renderRoute('/intake')
-    expect(screen.getByRole('heading', { name: 'Bring your own engineering ticket' })).toBeInTheDocument()
-    expect(screen.getByText(/ticket content stays in this browser/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Choose a demo ticket—or create your own' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ready-made demo tickets' })).toBeInTheDocument()
+    expect(screen.getByText(/Custom tickets are optional and browser-only/i)).toBeInTheDocument()
   })
 
   it('redirects unknown routes to the landing page', () => {

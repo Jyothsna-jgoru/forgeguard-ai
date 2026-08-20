@@ -15,7 +15,57 @@ export const demoTicket: EngineeringTicket = {
     'Cover new, repeated, and conflicting request paths with unit tests.',
     'Avoid logging payment details or exposing key values in error responses.',
   ],
+  source: 'reference',
 }
+
+export const demoTickets: EngineeringTicket[] = [
+  demoTicket,
+  {
+    key: 'IAM-2317',
+    title: 'Add adaptive rate limiting to the account-recovery endpoint.',
+    description: 'Reduce automated recovery abuse by applying bounded attempt limits, returning stable retry guidance, and preserving a privacy-safe response that does not reveal whether an account exists.',
+    risk: 'High',
+    service: 'identity-service',
+    owner: 'Identity Platform',
+    acceptance: [
+      'Apply a configurable limit to recovery attempts by normalized client signal.',
+      'Return HTTP 429 with a Retry-After header after the threshold is reached.',
+      'Keep responses indistinguishable for existing and unknown accounts.',
+      'Cover threshold, reset-window, and privacy behavior with unit tests.',
+    ],
+    source: 'catalog',
+  },
+  {
+    key: 'NTF-3081',
+    title: 'Prevent duplicate webhook delivery during notification retries.',
+    description: 'Attach a stable delivery identifier to outbound webhook attempts so transient retries remain traceable and consumers can safely discard duplicate deliveries.',
+    risk: 'Medium',
+    service: 'notification-service',
+    owner: 'Messaging Platform',
+    acceptance: [
+      'Reuse the same delivery identifier across retry attempts.',
+      'Apply bounded exponential backoff for transient failures.',
+      'Stop retrying after the configured delivery limit.',
+      'Cover successful retry, exhausted retry, and duplicate-delivery paths.',
+    ],
+    source: 'catalog',
+  },
+  {
+    key: 'ORD-4276',
+    title: 'Add a customer-safe order status history endpoint.',
+    description: 'Expose an ordered status timeline for a single order while enforcing ownership checks, stable pagination, and strict exclusion of internal fulfillment notes.',
+    risk: 'Medium',
+    service: 'order-service',
+    owner: 'Order Platform',
+    acceptance: [
+      'Return status events only when the authenticated customer owns the order.',
+      'Exclude internal notes and operational metadata from every response.',
+      'Return events in descending timestamp order with stable pagination.',
+      'Cover unauthorized access, empty history, and multi-page results.',
+    ],
+    source: 'catalog',
+  },
+]
 
 export const implementationPlan = [
   { title: 'Define the request contract', detail: 'Require Idempotency-Key at the controller boundary and map conflicts to a stable 409 response.' },

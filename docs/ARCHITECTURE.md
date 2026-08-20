@@ -8,7 +8,7 @@ ForgeGuard demonstrates how a multi-agent software delivery harness can separate
 
 ### Static public profile
 
-The Vite build contains all routes, typed reference records, deterministic custom-ticket generators, the reference code diff, policy events, and the approval interaction. GitHub Pages serves this immutable bundle. It has no required API connection, sign-in, key, or writable backend. Visitor-supplied tickets and approvals are persisted only in browser storage and are treated as untrusted display input.
+The Vite build contains all routes, four typed ready-made ticket scenarios, deterministic custom-ticket generators, the reference code diff, policy events, and the approval interaction. GitHub Pages serves this immutable bundle. It has no required API connection, sign-in, key, or writable backend. Ready-made scenarios require no visitor data; optional visitor-supplied tickets and approvals are persisted only in browser storage and treated as untrusted display input.
 
 ### Local evaluation profile
 

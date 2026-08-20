@@ -26,7 +26,13 @@ function readStoredTicket(): EngineeringTicket {
       'owner' in value && typeof value.owner === 'string' &&
       'risk' in value && ['Low', 'Medium', 'High'].includes(String(value.risk)) &&
       'acceptance' in value && Array.isArray(value.acceptance) && value.acceptance.every((item) => typeof item === 'string')
-    ) return value as EngineeringTicket
+    ) {
+      const ticket = value as Omit<EngineeringTicket, 'source'> & { source?: unknown }
+      const source = ticket.source === 'reference' || ticket.source === 'catalog' || ticket.source === 'custom'
+        ? ticket.source
+        : ticket.key === demoTicket.key ? 'reference' : 'custom'
+      return { ...ticket, source } as EngineeringTicket
+    }
   } catch {
     // Fall through to the reference ticket when browser storage is unavailable or invalid.
   }
@@ -40,7 +46,7 @@ export function DemoStateProvider({ children }: { children: ReactNode }) {
   const value = useMemo<DemoState>(() => ({
     approved,
     ticket,
-    isCustomTicket: ticket.key !== demoTicket.key,
+    isCustomTicket: ticket.source === 'custom',
     approve: () => {
       try {
         window.localStorage.setItem(APPROVAL_STORAGE_KEY, 'approved')

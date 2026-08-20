@@ -52,7 +52,7 @@ export function AppShell() {
           <Blocks size={14} /> <span>ForgeGuard</span><span>/</span><span className="capitalize text-slate-300">{location.pathname.slice(1) || 'overview'}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden rounded-md border border-line bg-white/[0.025] px-2.5 py-1.5 font-mono text-[10px] text-slate-400 sm:inline">{isCustomTicket ? `RUN-${ticket.key}` : 'RUN-2026-0818-0042'}</span>
+          <span className="hidden rounded-md border border-line bg-white/[0.025] px-2.5 py-1.5 font-mono text-[10px] text-slate-400 sm:inline">{ticket.source === 'reference' ? 'RUN-2026-0818-0042' : `RUN-${ticket.key}`}</span>
           <span className="flex items-center gap-2 text-[11px] font-medium text-teal-300"><span className="status-dot" /> Completed</span>
           <button type="button" onClick={() => setMenuOpen(true)} className="icon-button lg:hidden" aria-label="Open navigation"><Menu size={19} /></button>
         </div>

@@ -1,6 +1,6 @@
 import { AlertTriangle, Check, CheckCircle2, ClipboardCheck, FileCode2, GitBranch, GitPullRequestDraft, RotateCcw, ShieldCheck, TestTube2 } from 'lucide-react'
 import { PageHeader, RiskBanner, SectionTitle } from '../components/UI'
-import { buildImplementationPlan, buildPrPackage, buildProposedFiles } from '../data/scenario'
+import { buildImplementationPlan, buildPrPackage, buildProposedFiles, isReferenceTicket } from '../data/scenario'
 import { useDemoState } from '../state/useDemoState'
 import type { EngineeringTicket } from '../types'
 
@@ -13,6 +13,7 @@ export function ApprovalPage() {
   const plan = buildImplementationPlan(ticket)
   const files = buildProposedFiles(ticket)
   const packageData = buildPrPackage(ticket)
+  const hasReferencePatch = isReferenceTicket(ticket)
 
   return (
     <div className="page-container">
@@ -25,16 +26,16 @@ export function ApprovalPage() {
 
       {approved
         ? <ApprovedPackage onReset={resetApproval} ticket={ticket} files={files} packageData={packageData} />
-        : <ReviewPackage onApprove={approve} ticket={ticket} isCustomTicket={isCustomTicket} plan={plan} files={files} packageData={packageData} />}
+        : <ReviewPackage onApprove={approve} ticket={ticket} isCustomTicket={isCustomTicket} hasReferencePatch={hasReferencePatch} plan={plan} files={files} packageData={packageData} />}
     </div>
   )
 }
 
-function ReviewPackage({ onApprove, ticket, isCustomTicket, plan, files, packageData }: { onApprove: () => void; ticket: EngineeringTicket; isCustomTicket: boolean; plan: Plan; files: Files; packageData: PackageData }) {
-  const validationEvidence = isCustomTicket
+function ReviewPackage({ onApprove, ticket, isCustomTicket, hasReferencePatch, plan, files, packageData }: { onApprove: () => void; ticket: EngineeringTicket; isCustomTicket: boolean; hasReferencePatch: boolean; plan: Plan; files: Files; packageData: PackageData }) {
+  const validationEvidence = !hasReferencePatch
     ? [`${ticket.acceptance.length} acceptance checks mapped`, 'Input handled as untrusted text', 'Repository assumptions labeled', 'External adapters disabled', 'Policy evaluation complete']
     : ['PaymentServiceTest · 8 passed', 'PaymentControllerTest · 4 passed', 'Processor invoked once on retry', 'Conflicting payload rejected', 'Sensitive logging scan clear']
-  const reviewerFocus = isCustomTicket
+  const reviewerFocus = !hasReferencePatch
     ? [`Confirm the proposed scope matches ${ticket.service} architecture.`, `Validate all ${ticket.acceptance.length} acceptance criteria against repository tests.`, 'Replace every planning assumption with verified repository evidence.']
     : ['Confirm retry-key retention and atomicity requirements for the target runtime.', 'Validate HTTP 409 matches the service API error contract.', 'Confirm request fingerprinting includes every payment-defining field.']
 
@@ -56,7 +57,7 @@ function ReviewPackage({ onApprove, ticket, isCustomTicket, plan, files, package
       </div>
       <aside className="space-y-5">
         <section className="surface p-6"><SectionTitle icon={<TestTube2 size={17} className="text-teal-300" />} title="Validation evidence" /><div className="space-y-3">{validationEvidence.map((item) => <div key={item} className="flex items-center gap-3 text-xs text-slate-300"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-400/10 text-teal-300"><Check size={12} /></span>{item}</div>)}</div></section>
-        <section className="surface p-6"><SectionTitle icon={<ShieldCheck size={17} className="text-amber-300" />} title="Risk review" /><dl className="space-y-3 text-xs">{[['Scenario risk', `${ticket.risk}${isCustomTicket ? ' · visitor classified' : ''}`], ['Residual note', isCustomTicket ? 'Repository context not connected' : 'In-memory store is demo-only'], ['Policy decision', 'Approval required'], ['External changes', 'None performed']].map(([label, value]) => <div key={label} className="flex justify-between gap-3"><dt className="text-slate-500">{label}</dt><dd className="text-right text-slate-300">{value}</dd></div>)}</dl></section>
+        <section className="surface p-6"><SectionTitle icon={<ShieldCheck size={17} className="text-amber-300" />} title="Risk review" /><dl className="space-y-3 text-xs">{[['Scenario risk', `${ticket.risk}${isCustomTicket ? ' · visitor classified' : ' · ready-made scenario'}`], ['Residual note', hasReferencePatch ? 'In-memory store is demo-only' : 'Repository context not connected'], ['Policy decision', 'Approval required'], ['External changes', 'None performed']].map(([label, value]) => <div key={label} className="flex justify-between gap-3"><dt className="text-slate-500">{label}</dt><dd className="text-right text-slate-300">{value}</dd></div>)}</dl></section>
         <button type="button" onClick={onApprove} className="button button-primary w-full py-3.5"><ShieldCheck size={17} /> Approve Draft PR</button>
         <p className="text-center text-[10px] leading-4 text-slate-600">Demo mode only · records local approval · performs no GitHub mutation</p>
       </aside>
@@ -65,12 +66,13 @@ function ReviewPackage({ onApprove, ticket, isCustomTicket, plan, files, package
 }
 
 function ApprovedPackage({ onReset, ticket, files, packageData }: { onReset: () => void; ticket: EngineeringTicket; files: Files; packageData: PackageData }) {
+  const artifactTitle = isReferenceTicket(ticket) ? 'Changed files' : 'Proposed artifacts'
   return <div className="mx-auto max-w-5xl">
     <div className="mb-6 overflow-hidden rounded-2xl border border-teal-400/25 bg-gradient-to-br from-teal-400/[0.08] via-panel to-electric/[0.06] p-7 shadow-glow">
       <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start"><div className="flex gap-4"><span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-400/15 text-teal-300"><GitPullRequestDraft size={23} /></span><div><div className="eyebrow mb-2">Draft pull request · simulated</div><h2 className="text-xl font-semibold leading-7 text-white">{packageData.title}</h2><div className="mt-3 flex flex-wrap items-center gap-3 font-mono text-[10px] text-slate-500"><span className="flex items-center gap-1.5"><GitBranch size={12} /> {packageData.branch}</span><span>→</span><span>main</span></div></div></div><span className="decision-badge badge-allowed"><Check size={12} /> Draft ready</span></div>
       <p className="mt-6 border-t border-teal-400/10 pt-5 text-sm leading-6 text-slate-400">{packageData.summary}</p>
     </div>
-    <div className="grid gap-6 md:grid-cols-2"><section className="surface p-6"><SectionTitle title={ticket.key.startsWith('DEMO-') ? 'Proposed artifacts' : 'Changed files'} />{files.map((file) => <div key={file.path} className="mb-3 flex items-center justify-between gap-3 border-b border-line/50 pb-3 last:mb-0 last:border-0"><code className="truncate text-[10px] text-blue-200">{file.path.split('/').at(-1)}</code><span className="font-mono text-[9px] text-teal-400">{file.change}</span></div>)}</section><section className="surface p-6"><SectionTitle title="Checks and review state" />{packageData.checks.map((item) => <div key={item} className="mb-3 flex items-center gap-3 text-xs text-slate-300"><CheckCircle2 size={15} className="text-teal-300" />{item}</div>)}</section></div>
+    <div className="grid gap-6 md:grid-cols-2"><section className="surface p-6"><SectionTitle title={artifactTitle} />{files.map((file) => <div key={file.path} className="mb-3 flex items-center justify-between gap-3 border-b border-line/50 pb-3 last:mb-0 last:border-0"><code className="truncate text-[10px] text-blue-200">{file.path.split('/').at(-1)}</code><span className="font-mono text-[9px] text-teal-400">{file.change}</span></div>)}</section><section className="surface p-6"><SectionTitle title="Checks and review state" />{packageData.checks.map((item) => <div key={item} className="mb-3 flex items-center gap-3 text-xs text-slate-300"><CheckCircle2 size={15} className="text-teal-300" />{item}</div>)}</section></div>
     <section className="surface mt-6 p-6"><div className="grid gap-5 sm:grid-cols-3"><div><div className="detail-label">Approval record</div><div className="mt-2 font-mono text-xs text-blue-200">APR-2026-0042</div></div><div><div className="detail-label">Actor</div><div className="mt-2 text-xs text-slate-300">Demo visitor · explicit action</div></div><div><div className="detail-label">Audit result</div><div className="mt-2 text-xs text-teal-300">Hash chain verified</div></div></div></section>
     <button type="button" onClick={onReset} className="button button-secondary mt-6"><RotateCcw size={14} /> Reset checkpoint</button>
   </div>

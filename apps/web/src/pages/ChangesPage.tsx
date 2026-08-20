@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import { CodeDiff } from '../components/CodeDiff'
 import { PageHeader, SectionTitle, SecureNotice } from '../components/UI'
 import { proposedFiles } from '../data/demo'
-import { buildProposedFiles } from '../data/scenario'
+import { buildProposedFiles, isReferenceTicket } from '../data/scenario'
 import { useDemoState } from '../state/useDemoState'
 
 export function ChangesPage() {
-  const { ticket, isCustomTicket } = useDemoState()
-  if (isCustomTicket) return <CustomChangePlan ticket={ticket} />
+  const { ticket } = useDemoState()
+  if (!isReferenceTicket(ticket)) return <ScenarioChangePlan ticket={ticket} />
   return (
     <div className="page-container">
       <PageHeader eyebrow="Proposed changes · Review workspace" title="A patch, not a repository mutation" description="The Code Agent produced this unified diff inside an isolated demo workspace. It is review evidence only and has not been applied to any external repository." action={<span className="decision-badge badge-allowed"><GitCompareArrows size={12} /> +74 / −6 lines</span>} />
@@ -25,12 +25,13 @@ export function ChangesPage() {
   )
 }
 
-function CustomChangePlan({ ticket }: { ticket: ReturnType<typeof useDemoState>['ticket'] }) {
+function ScenarioChangePlan({ ticket }: { ticket: ReturnType<typeof useDemoState>['ticket'] }) {
   const files = buildProposedFiles(ticket)
+  const isCustomTicket = ticket.source === 'custom'
   return (
     <div className="page-container">
-      <PageHeader eyebrow={`Custom scenario · ${ticket.key}`} title="Structured change proposal" description="Without a connected repository, ForgeGuard produces an honest change-surface plan instead of fabricating source code or claiming that a patch was applied." action={<span className="decision-badge badge-allowed"><GitCompareArrows size={12} /> Reviewable plan</span>} />
-      <SecureNotice><span><strong className="font-semibold text-white">Portfolio demo boundary:</strong> these paths describe likely implementation areas for <code className="text-teal-200">{ticket.service}</code>. No repository was read or modified.</span></SecureNotice>
+      <PageHeader eyebrow={`${isCustomTicket ? 'Custom' : 'Ready-made'} scenario · ${ticket.key}`} title="Structured change proposal" description="Without a connected repository, ForgeGuard produces an honest change-surface plan instead of fabricating source code or claiming that a patch was applied." action={<span className="decision-badge badge-allowed"><GitCompareArrows size={12} /> Reviewable plan</span>} />
+      <SecureNotice><span><strong className="font-semibold text-white">Portfolio demo boundary:</strong> these paths describe likely implementation areas for <code className="text-teal-200">{ticket.service}</code>. No repository was read or modified. Choose PAY-1842 from Ticket Intake to inspect the complete sample Java diff.</span></SecureNotice>
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_370px]">
         <section className="surface p-6 md:p-7">
           <SectionTitle icon={<Braces size={18} className="text-electric" />} eyebrow="Code Agent output" title="Proposed implementation areas" description="Each artifact remains a planning statement until a human connects it to real repository context." />
